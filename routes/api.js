@@ -24,6 +24,16 @@ module.exports = function (app) {
     .get(function (req, res) {
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+      Book.find({}, function (err, books) {
+        if (err || !books) return res.send(err);
+        let arrayOfBooks = [];
+        books.forEach((book) => {
+          book = book.toJSON();
+          book["commentcount"] = book.comments.length;
+          arrayOfBooks.push(book);
+        });
+        return res.json(arrayOfBooks);
+      });
     })
 
     .post(function (req, res) {
@@ -46,6 +56,13 @@ module.exports = function (app) {
     .get(function (req, res) {
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+      Book.findById(bookid, function (err, book) {
+        if (!book) return res.send("no book exists");
+        if (err) return res.send(err);
+        book = book.toJSON();
+        book["commentcount"] = book.comments.length;
+        return res.json(book);
+      });
     })
 
     .post(function (req, res) {
