@@ -12,6 +12,13 @@ let mongoose = require("mongoose");
 require("dotenv").config();
 const URI = process.env.DB;
 module.exports = function (app) {
+  mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
+  let bookSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    comments: [String],
+  });
+  let Book = mongoose.model("Book", bookSchema);
+
   app
     .route("/api/books")
     .get(function (req, res) {
@@ -22,6 +29,12 @@ module.exports = function (app) {
     .post(function (req, res) {
       let title = req.body.title;
       //response will contain new book object including atleast _id and title
+      if (!title) return res.send("missing required field title");
+      let newBook = new Book({ title: title, comments: [] });
+      newBook.save(function (err, savedBook) {
+        if (err || !savedBook) return res.send(err);
+        res.json(savedBook);
+      });
     })
 
     .delete(function (req, res) {

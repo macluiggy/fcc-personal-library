@@ -7,6 +7,7 @@ specifiers:
   cors: ^2.8.1
   dotenv: ^8.2.0
   express: ^4.14.0
+  helmet: ^4.6.0
   mocha: ^3.2.0
   mongodb: ^4.2.2
   mongoose: ^6.1.4
@@ -20,6 +21,7 @@ dependencies:
   cors: 2.8.5
   dotenv: 8.6.0
   express: 4.17.2
+  helmet: 4.6.0
   mocha: 3.5.3
   mongodb: 4.2.2
   mongoose: 6.1.4
@@ -910,6 +912,11 @@ packages:
   /he/1.1.1:
     resolution: {integrity: sha1-k0EP0hsAlzUVH4howvJx80J+I/0=}
     hasBin: true
+    dev: false
+
+  /helmet/4.6.0:
+    resolution: {integrity: sha512-HVqALKZlR95ROkrnesdhbbZJFi/rIVSoNq6f3jA/9u6MIbTsPh3xZwihjeI5+DO/2sOV6HMHooXcEOuwskHpTg==}
+    engines: {node: '>=10.0.0'}
     dev: false
 
   /http-cache-semantics/4.1.0:
