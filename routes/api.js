@@ -9,6 +9,7 @@
 "use strict";
 let mongodb = require("mongodb");
 let mongoose = require("mongoose");
+let ObjectId = mongodb.ObjectId;
 require("dotenv").config();
 const URI = process.env.DB;
 module.exports = function (app) {
@@ -49,6 +50,11 @@ module.exports = function (app) {
 
     .delete(function (req, res) {
       //if successful response will be 'complete delete successful'
+      Book.deleteMany({}, function (err, jsonStatus) {
+        if (err) return res.send(err);
+        if (!jsonStatus) return res.send("no books to delete");
+        return res.send("complete delete successful");
+      });
     });
 
   app
@@ -66,13 +72,36 @@ module.exports = function (app) {
     })
 
     .post(function (req, res) {
-      let bookid = req.params.id;
+      let id = req.params.id;
       let comment = req.body.comment;
       //json res format same as .get
+      if (!comment) return res.send("missing required field comment");
+      Book.findOneAndUpdate(
+        // find the book by id and update it
+        { _id: ObjectId(id) }, // find the book by id
+        { $push: { comments: comment } }, // push the comment into the comments array
+        { new: true }, // return the updated document
+        function (err, updatedBook) {
+          try {
+            if (!updatedBook) return res.send("no book exists");
+            // if (err) return res.send(err);
+            updatedBook = updatedBook.toJSON(); // convert the mongoose object to a json object
+            updatedBook["commentcount"] = updatedBook.comments.length; // add the commentcount property
+            return res.json(updatedBook);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      );
     })
 
     .delete(function (req, res) {
       let bookid = req.params.id;
       //if successful response will be 'delete successful'
+      Book.findByIdAndDelete(bookid, function (err, deletedBook) {
+        if (!deletedBook) return res.send("no book exists");
+        if (err) return res.send(err);
+        return res.send("delete successful");
+      });
     });
 };
